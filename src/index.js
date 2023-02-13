@@ -15,6 +15,7 @@ class Bot {
         const initLIST = [new sendLesson(this.bot)];
         initLIST.map((e)=>{e.init();})
         this.bot.launch();
+        console.log('Бот успешно запустился');
     }
     
 }

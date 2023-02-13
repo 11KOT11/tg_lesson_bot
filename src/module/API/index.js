@@ -1,7 +1,7 @@
 import puppeteer from 'puppeteer';
 
 export default async function (login, password) {
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({args: ['--no-sandbox'],});
   const page = await browser.newPage();
 
   await page.goto('https://school.r-19.ru/personal-area/#diary');
@@ -17,8 +17,15 @@ export default async function (login, password) {
   await page.waitForSelector(".dynamic > .today > table > tbody > tr");
   const text = await page.evaluate(async()=>{
     let page = [];
-    const data = document.querySelectorAll(".dynamic > .today > table > tbody > tr");
-    data.forEach((e)=>{
+    let findDate = "";
+    const date = new Date();
+    const mount = date.getMonth()+1 > 9 ? date.getMonth()+1 : "0"+(date.getMonth()+1)
+    const nowDate = `${date.getDate()}/${mount}`;
+    const nextDate = `${date.getDate()+1}/${mount}`
+    if(date.getHours()>13) document.querySelectorAll(".date").forEach((e)=>{if(nextDate==e.innerText)findDate=e})
+    else document.querySelectorAll(".date").forEach((e)=>{if(nextDate==e.innerText)findDate=e})
+    const data = findDate.parentNode.parentNode.querySelectorAll("table > tbody > tr")
+    data.forEach((e, i)=>{
         const selectData = e.querySelectorAll('td');
         const outObj = {
             lesson: selectData[1].innerText,
